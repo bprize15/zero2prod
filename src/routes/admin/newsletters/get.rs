@@ -2,13 +2,14 @@ use actix_web::{http::header::ContentType, HttpResponse};
 use actix_web_flash_messages::IncomingFlashMessages;
 use std::fmt::Write;
 
-pub async fn publish_newsletter_form(flash_messages: IncomingFlashMessages) -> HttpResponse {
+pub async fn publish_newsletter_form(flash_messages: IncomingFlashMessages) -> Result<HttpResponse, actix_web::Error> {
     let mut msg_html = String::new();
     for m in flash_messages.iter() {
         writeln!(msg_html, "<p><i>{}</i></p>", m.content()).unwrap();
     }
 
-    HttpResponse::Ok()
+    let idempotency_key = uuid::Uuid::new_v4().to_string();
+    Ok(HttpResponse::Ok()
     .content_type(ContentType::html())
     .body(format!(
         r#"<!DOCTYPE html>
@@ -46,10 +47,11 @@ pub async fn publish_newsletter_form(flash_messages: IncomingFlashMessages) -> H
         ></textarea>
     </label>
     <br>
+    <input hidden type="text" name="idempotency_key" value="{idempotency_key}">
     <button type="submit">Publish</button>
 </form>
 <p><a href="/admin/dashboard">&lt;- Back</a></p>
 </body>
 </html>"#,
-    ))
+    )))
 }

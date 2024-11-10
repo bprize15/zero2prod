@@ -49,6 +49,7 @@ htmlescape = "0.3"
 actix-web-flash-messages = { version = "0.4", features = ["cookies"] }
 actix-session = { version = "0.7", features = ["redis-rs-tls-session"] }
 actix-web-lab = "0.18"
+serde_urlencoded = "0.7.1"
 
 [dependencies.reqwest]
 version = "0.11"
